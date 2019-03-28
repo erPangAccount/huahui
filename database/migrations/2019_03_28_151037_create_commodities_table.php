@@ -17,7 +17,7 @@ class CreateCommoditiesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedInteger('category_id')->default(0)->comment('商品类别Id');
             $table->string('name', 120)->default('')->comment('商品名称');
-            $table->text('description')->default('')->comment('商品详情');
+            $table->text('description')->nullable()->comment('商品详情');
             $table->string('image')->default('')->comment('商品首图地址');
             $table->json('images')->nullable()->comment('商品相册');
             $table->boolean('on_sale')->default(false)->comment('是否正常销售中');
