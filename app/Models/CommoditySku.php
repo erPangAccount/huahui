@@ -18,10 +18,11 @@ class CommoditySku extends Model
      * @var array
      */
     protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'stock',
+        'sku_name',
+        'sku_description',
+        'sku_price',
+        'sku_stock',
+        'sku_image',
         'commodity_id'
     ];
 
@@ -36,7 +37,7 @@ class CommoditySku extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function attribute()
+    public function skuAttributes()
     {
         return $this->hasMany(CommoditySkuAttribue::class, 'sku_id');
     }

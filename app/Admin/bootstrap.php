@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Laravel-admin - admin builder based on Laravel.
  * @author z-song <https://github.com/z-song>
@@ -18,4 +17,9 @@
  *
  */
 
-Encore\Admin\Form::forget(['map', 'editor']);
+use Encore\Admin\Form;
+use App\Admin\Extensions\WangEditor;
+
+Form::forget(['map', 'editor']);
+
+Form::extend('editor', WangEditor::class);

@@ -17,6 +17,7 @@ class CreateCommodityCategoriesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedInteger('parent_id')->default(0)->comment('父类id');
             $table->string('name', 30)->default('')->comment('类别名称');
+            $table->tinyInteger('level')->default(1)->comment('级别');
             $table->timestamps();
             $table->softDeletes();
         });
