@@ -72,4 +72,9 @@ class Commodity extends Model
     {
         return $this->belongsTo(CommodityCategory::class, 'category_id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(OrderItem::class, 'commodity_id')->whereNotNull('reviewed_at');
+    }
 }

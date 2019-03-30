@@ -38,6 +38,6 @@ $factory->define(Commodity::class, function (Faker $faker) {
         'on_sale' => $faker->boolean,
         'rating' => $faker->randomFloat(null, 0.0, 5.0),
         'sold_count' => $faker->randomDigitNotNull,
-        'review_count' => $faker->randomDigitNotNull
+        'review_count' => 0
     ];
 });

@@ -31,7 +31,7 @@ class CustommerAddress extends Model
     protected $casts = [
         'is_default' => 'boolean'
     ];
-    
+
     /**
      * @var array
      */

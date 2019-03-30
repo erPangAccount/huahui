@@ -1,9 +1,9 @@
 <?php
-namespace App\Resitories;
+namespace App\Repositories;
 
 use App\Models\Customer;
 
-class CustomerResitory
+class CustomerRepository
 {
     /**
      * @param $params

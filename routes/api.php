@@ -26,7 +26,12 @@ Route::middleware(['client', 'cors'])->group(function () {
     });
 
     Route::group(['namespace' => 'Api'], function () {
+        //用户登录
         Route::post('login', 'SessionController@session')->name('loginCustomer');
+
+        //商品列表
+        Route::get('/commodities', 'CommodityController@index')->name('commodities.index');
+        Route::get('/commodities/{id}', 'CommodityController@show')->name('commodities.show');
     });
 
     Route::post('getPasswordToken', function (Request $request) {    //获取用户密码登录的token
@@ -36,10 +41,14 @@ Route::middleware(['client', 'cors'])->group(function () {
     Route::post('refreshPasswordToken', function (Request $request) {    //刷新用户密码登录的token
         return OauthFacade::refreshPasswordToken($request);
    })->name('refreshPasswordToken');
+
+
+
 });
 
 Route::middleware(['auth:api', 'cors'])->group(function () {
-    Route::get('/passwordOauth', function (Request $request) {
-        return $request->user();
+    //用户信息
+    Route::get('/customer', function (Request $request) {
+        return UtilsFacade::render($request->user());
     });
 });

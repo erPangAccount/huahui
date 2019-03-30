@@ -1,7 +1,8 @@
 <?php
 namespace App\Service;
 
-use App\Resitories\CustomerResitory;
+
+use App\Repositories\CustomerRepository;
 
 class CustomerService
 {
@@ -9,7 +10,7 @@ class CustomerService
 
     public function __construct()
     {
-        $this->customerResitory = new CustomerResitory();
+        $this->customerResitory = new CustomerRepository();
     }
 
     /**
