@@ -21,7 +21,8 @@ class CustomersTableSeeder extends Seeder
         ];
 
         foreach ($customers as $customer) {
-            \App\Models\Customer::query()->firstOrCreate($customer);
+            if (!\App\Models\Customer::query()->where('email', '=', $customer['email'])->orWhere('mobile', '=', $customer['mobile'])->exists())
+                \App\Models\Customer::query()->firstOrCreate($customer);
         }
     }
 }

@@ -14,6 +14,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use http\Client\Curl\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class CommodityController extends Controller
@@ -75,9 +76,15 @@ class CommodityController extends Controller
         $grid->id('Id')->sortable();
         $grid->column('category.name', '商品类别')->sortable();
         $grid->name('商品名称');
-        $grid->image('主图')->display(function ($content) {
-            if ($content) {
-                $url = env('APP_URL') . '/app/public/admin/' . $content;
+        $grid->image('主图')->display(function ($url) {
+            if ($url) {
+                $validate = Validator::make(compact('url'), [
+                    'url' => 'url'
+                ]);
+                if ($validate->messages()->first()) {
+                    $url = env('APP_URL') . '/app/public/admin/' . $url;
+                }
+
                 return '<img src="' . $url . '" style="max-width:100px" alt="" srcset="">';
             }
         });

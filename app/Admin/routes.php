@@ -22,6 +22,8 @@ Route::group([
 
     //商品管理
     $router->resource('/commodities', 'CommodityController');
+    //商品属性管理
+//    $router->resource('/commodity_attribute', 'CommodityAttributeController');
     //商品类别管理
     $router->get('commodity_category', 'CommodityCategoryController@index');
     $router->get('commodity_category/create', 'CommodityCategoryController@create');

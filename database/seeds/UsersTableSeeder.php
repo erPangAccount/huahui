@@ -21,7 +21,8 @@ class UsersTableSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            \App\Models\User::query()->firstOrCreate($user);
+            if (!\App\Models\User::query()->where('email', '=', $user['email'])->exists())
+                \App\Models\User::query()->create($user);
         }
     }
 }
