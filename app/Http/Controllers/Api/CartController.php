@@ -46,7 +46,9 @@ class CartController extends Controller
 
     /**
      * @param Request $request
+     * @param $id
      * @return mixed
+     * @throws \Exception
      */
     public function update(Request $request, $id)
     {

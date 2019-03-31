@@ -34,7 +34,6 @@ use Illuminate\Http\Request;
  * @apiName orders.store
  * @apiGroup orders
  *
- * @apiUse Page
  * @apiParam    {Integer}    address_id    地址id
  * @apiParam    {Object []}    items    商品
  * @apiParam    {Integer}    items.commodity_sku_id    单品id
@@ -60,7 +59,6 @@ use Illuminate\Http\Request;
  * @apiName orders.update
  * @apiGroup orders
  *
- * @apiUse Page
  * @apiParam    {String="paid", "applied"}    status    订单状态 paid(支付订单), applied(申请退款)
  *
  * @apiSuccess        {Number}    status    状态码
@@ -75,6 +73,41 @@ use Illuminate\Http\Request;
  * @apiUse Error
  */
 
+/**
+ * @api {get} /orders/:id 订单详情
+ * @apiVersion 0.0.1
+ * @apiName orders.show
+ * @apiGroup orders
+ *
+ * @apiSuccess        {Number}    status    状态码
+ * @apiSuccess        {String}    message    状态提示
+ * @apiSuccess        {Object}    data    数据
+ *
+ * @apiSuccessExample Success:
+ *   {
+ *
+ *   }
+ *
+ * @apiUse Error
+ */
+
+/**
+ * @api {delete} /orders/:id 删除订单
+ * @apiVersion 0.0.1
+ * @apiName orders.destroy
+ * @apiGroup orders
+ *
+ * @apiSuccess        {Number}    status    状态码
+ * @apiSuccess        {String}    message    状态提示
+ * @apiSuccess        {Object}    data    数据
+ *
+ * @apiSuccessExample Success:
+ *   {
+ *
+ *   }
+ *
+ * @apiUse Error
+ */
 
 class OrderController extends Controller
 {

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Cart;
 use App\Models\CommoditySku;
 use App\Models\CustommerAddress;
 use App\Models\Order;
@@ -171,8 +172,8 @@ class OrderRepository
                         if ($skusArr[$item['commodity_sku_id']]['model']->decreaseStock($item['number']) <= 0) {
                             throw new \Exception('【' . $skusArr[$item['commodity_sku_id']]['model']->sku_name . '】商品库存不足');
                         }
-
                     }
+                    Cart::query()->whereIn('commodity_sku_id', $skuIds)->where('customer_id', '=', $params['customer_id'])->delete();
 
                     OrderItem::query()->insert($saveOrderData['items']);
                 }
@@ -182,6 +183,7 @@ class OrderRepository
             DB::rollback();
             throw new \Exception($exception->getMessage());
         }
+
         return $order;
     }
 
