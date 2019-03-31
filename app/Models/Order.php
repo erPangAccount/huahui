@@ -10,13 +10,16 @@ class Order extends Model
 {
     use SoftDeletes;
 
-    const REFUND_STATUS_PENDING = 'pending';
+    const PAY_STATUS_UN = 'unpay';
+    const PAY_STATUS_OK = 'paid';
+
+    const REFUND_STATUS_PENDING = 'unapplied';
     const REFUND_STATUS_APPLIED = 'applied';
     const REFUND_STATUS_PROCESSING = 'processing';
     const REFUND_STATUS_SUCCESS = 'success';
     const REFUND_STATUS_FAILED = 'failed';
 
-    const SHIP_STATUS_PENDING = 'pending';
+    const SHIP_STATUS_PENDING = 'undelivered';
     const SHIP_STATUS_DELIVERED = 'delivered';
     const SHIP_STATUS_RECEIVED = 'received';
 
@@ -90,12 +93,26 @@ class Order extends Model
             if (!$model->order_no) {
                 // 调用 findAvailableNo 生成订单流水号
                 $model->order_no = static::findAvailableNo();
-                // 如果生成失败，则终止创建订单
-                if (!$model->order_no) {
-                    return false;
-                }
             }
         });
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getStatusAttribute()
+    {
+        if (is_null($this->paid_at)) {
+            return [
+                'key' => self::PAY_STATUS_UN,
+                'value' => '未支付'
+            ];
+        } else {
+            return [
+                'key' => $this->ship_status,
+                'value' => self::$shipStatusMap[$this->ship_status]
+            ];
+        }
     }
 
     /**
@@ -126,12 +143,11 @@ class Order extends Model
             // 随机生成 6 位的数字
             $no = $prefix.str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             // 判断是否已经存在
-            if (!static::query()->where('no', $no)->exists()) {
+            if (!static::query()->where('order_no', $no)->exists()) {
                 return $no;
             }
         }
         Log::warning('订单号生成失败！');
-
-        return false;
+        throw new \Exception('订单号生成失败！');
     }
 }

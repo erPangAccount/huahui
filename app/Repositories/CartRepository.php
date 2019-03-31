@@ -12,7 +12,7 @@ class CartRepository
      * @param string $sortOrder
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function page(array $params,  $sortFiled = 'created_at', $sortOrder = 'asc')
+    public function page(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
     {
         return $this->query($params, $sortFiled, $sortOrder)->paginate(array_get($params, 'pageSize', 10));
     }
@@ -23,15 +23,7 @@ class CartRepository
      */
     public function first(array $params)
     {
-        $query = Cart::query();
-
-        if (isset($params['customer_id'])) {
-            $query->where('customer_id', '=', $params['customer_id']);
-        }
-
-        if (isset($params['commodity_sku_id'])) {
-            $query->where('commodity_sku_id', '=', $params['commodity_sku_id']);
-        }
+        $query = $this->query($params);
 
         return $query->first();
     }
@@ -42,8 +34,12 @@ class CartRepository
      */
     public function save(array $params)
     {
+        if (!(isset($params['customer_id']) && $params['customer_id'])) {
+            return ;
+        }
+
         if (isset($params['id']) && $params['id']) {
-            $cart = Cart::query()->find($params['id']) ?? new Cart();
+            $cart = Cart::query()->where('id', '=', $params['id'])->where('customer_id', '=', $params['customer_id'])->first() ?? new Cart();
         } else {
             $cart = new Cart();
         }
@@ -104,7 +100,7 @@ class CartRepository
      * @param string $sortOrder
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    protected function query(array $params, $sortFiled, $sortOrder)
+    protected function query(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
     {
         $query = Cart::query()
             ->with(['commositySku' => function ($query) {
@@ -133,6 +129,10 @@ class CartRepository
 
         if (isset($params['customer_id'])) {
             $query->where('customer_id', '=', $params['customer_id']);
+        }
+
+        if (isset($params['commodity_sku_id'])) {
+            $query->where('commodity_sku_id', '=', $params['commodity_sku_id']);
         }
 
         return $query;

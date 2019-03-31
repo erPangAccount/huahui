@@ -21,7 +21,7 @@ class CreateOrdersTable extends Migration
             $table->decimal('total_amount', 16, 2)->default(0)->comment('订单价格');
             $table->text('remark')->nullable()->comment('订单备注');
             $table->dateTime('paid_at')->nullable()->comment('支付时间');
-            $table->string('payment_method', 10)->default(0)->comment('支付方式 ');
+            $table->string('payment_method', 10)->default('')->comment('支付方式 ');
             $table->string('payment_no')->default('')->comment('支付平台订单号');
             $table->string('refund_status', 10)->default(\App\Models\Order::REFUND_STATUS_PENDING)->comment('退款状态');
             $table->string('refund_no')->default('')->comment('退款单号');

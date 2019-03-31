@@ -58,6 +58,7 @@ class CartService
      * @param $number
      * @param int $customer_id
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
+     * @throws \Exception
      */
     public function update($id, $number, $customer_id = 0)
     {

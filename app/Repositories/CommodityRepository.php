@@ -25,7 +25,7 @@ class CommodityRepository
      */
     public function detail($id)
     {
-        return Commodity::query()->with(['skus' => function ($query) {
+        return $this->query([])->with(['skus' => function ($query) {
             $query->select([
                 "id",
                 'sku_name',
@@ -45,18 +45,7 @@ class CommodityRepository
                 'sku_name',
                 'sku_image'
             ]);
-        }])->select([
-            'id',
-            'name',
-            'category_id',
-            'description',
-            'image',
-            'on_sale',
-            'rating',
-            'sold_count',
-            'review_count',
-            'price'
-        ])->findOrFail($id);
+        }])->findOrFail($id);
     }
 
     /**
@@ -65,7 +54,7 @@ class CommodityRepository
      * @param string $sortOrder
      * @return \Illuminate\Database\Eloquent\Builder|mixed
      */
-    protected function query(array $params, $sortFiled, $sortOrder)
+    protected function query(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
     {
         $query = Commodity::query()->with(['category' => function ($query) {
             $query->select("name", "id");
