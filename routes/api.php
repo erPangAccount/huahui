@@ -51,4 +51,14 @@ Route::middleware(['auth:api', 'cors'])->group(function () {
     Route::get('/customer', function (Request $request) {
         return UtilsFacade::render($request->user());
     });
+
+
+    Route::group(['namespace' => 'Api'], function () {
+        //购物车列表
+        Route::get('/cart', 'CartController@index')->name('cart.index');
+        Route::post('/cart', 'CartController@store')->name('cart.store');
+        Route::match(['put', 'patch'], '/cart/{id}', 'CartController@update')->name('cart.update');
+        Route::delete('/cart/{id}', 'CartController@destroy')->name('cart.destroy');
+
+    });
 });

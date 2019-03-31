@@ -15,7 +15,7 @@ class CommodityRepository
      */
     public function page(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
     {
-        return $this->query($params, $sortFiled, $sortOrder)->paginate(10);
+        return $this->query($params, $sortFiled, $sortOrder)->paginate(array_get($params, 'pageSize', 10));
     }
 
     /**
@@ -65,7 +65,7 @@ class CommodityRepository
      * @param string $sortOrder
      * @return \Illuminate\Database\Eloquent\Builder|mixed
      */
-    protected function query(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
+    protected function query(array $params, $sortFiled, $sortOrder)
     {
         $query = Commodity::query()->with(['category' => function ($query) {
             $query->select("name", "id");
