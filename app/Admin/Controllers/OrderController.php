@@ -134,69 +134,73 @@ class OrderController extends Controller
             $actions->disableEdit();
             if ($actions->row->status['key'] === Order::SHIP_STATUS_PENDING) {    //待发货
                 $actions->append('<span style="color: #3c8dbc;cursor:pointer " title="发货" id="ship" url="' . url('/admin/api/orders', ['id' => $actions->getKey()]) . '"><i class="fa fa-share"></i></span>');
+
+                Admin::script(<<<SCRIPT
+                    document.getElementById('ship').addEventListener('click', function() {
+                        var url =  this.getAttribute('url');
+                        $.ajax({
+                            type: 'PUT',
+                            url: url,
+                            data: {
+                                status: 'ship'
+                            },
+                            dataType: 'json',
+                            success: function(res) {
+                                if (!res.status) {
+                                    location.reload();
+                                } 
+                            },
+                        });
+                    });
+SCRIPT
+                );
             }
 
             if ($actions->row->status['key'] === Order::REFUND_STATUS_APPLIED) {
                 $actions->append('<span style="color: #3c8dbc;cursor:pointer " title="允许退款" id="agree-refund" url="' . url('/admin/api/orders', ['id' => $actions->getKey()]) . '"><i class="fa fa-check"></i></span>');
                 $actions->append('<span style="color: #3c8dbc;cursor:pointer " title="拒绝退款" id="refuse-refund" url="' . url('/admin/api/orders', ['id' => $actions->getKey()]) . '"><i class="fa fa-times"></i></span>');
+
+                Admin::script(<<<SCRIPT
+                    document.getElementById('agree-refund').addEventListener('click', function() {
+                        var url =  this.getAttribute('url');
+                        $.ajax({
+                            type: 'PUT',
+                            url: url,
+                            data: {
+                                status: 'agree'
+                            },
+                            dataType: 'json',
+                            success: function(res) {
+                                if (!res.status) {
+                                    location.reload();
+                                } 
+                            },
+                        });
+                      
+                    });
+                    
+                    document.getElementById('refuse-refund').addEventListener('click', function() {
+                        var url =  this.getAttribute('url');
+                        $.ajax({
+                            type: 'PUT',
+                            url: url,
+                            data: {
+                                status: 'refuse'
+                            },
+                            dataType: 'json',
+                            success: function(res) {
+                                if (!res.status) {
+                                    location.reload();
+                                } 
+                            },
+                        });
+                      
+                    });
+SCRIPT
+                );
             }
         });
 
-        Admin::script(<<<SCRIPT
-        document.getElementById('ship').addEventListener('click', function() {
-            var url =  this.getAttribute('url');
-            $.ajax({
-                type: 'PUT',
-                url: url,
-                data: {
-                    status: 'ship'
-                },
-                dataType: 'json',
-                success: function(res) {
-                    if (!res.status) {
-                        location.reload();
-                    } 
-                },
-            });
-        });
-        
-        document.getElementById('agree-refund').addEventListener('click', function() {
-            var url =  this.getAttribute('url');
-            $.ajax({
-                type: 'PUT',
-                url: url,
-                data: {
-                    status: 'agree'
-                },
-                dataType: 'json',
-                success: function(res) {
-                    if (!res.status) {
-                        location.reload();
-                    } 
-                },
-            });
-          
-        });
-        
-        document.getElementById('refuse-refund').addEventListener('click', function() {
-            var url =  this.getAttribute('url');
-            $.ajax({
-                type: 'PUT',
-                url: url,
-                data: {
-                    status: 'refuse'
-                },
-                dataType: 'json',
-                success: function(res) {
-                    if (!res.status) {
-                        location.reload();
-                    } 
-                },
-            });
-          
-        });
-SCRIPT
-        );
 
         $grid->tools(function ($tools) {
             // 禁用批量删除按钮
