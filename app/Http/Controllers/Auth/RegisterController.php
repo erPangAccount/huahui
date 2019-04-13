@@ -67,10 +67,10 @@ class RegisterController extends Controller
     protected function validatorCustomer(array $data)
     {
         return Validator::make($data, [
-            'mobile' => ['nullable', 'string', 'mobile', 'max:11'],
-            'email' => ['required', 'string', 'email', 'max:120', 'unique:customers'],
+            'mobile' => [isset($data['email']) ? 'nullable' : 'required', 'string', 'mobile', 'max:11'],
+            'email' => [isset($data['mobile']) ? 'nullable' : 'required', 'string', 'email', 'max:120', 'unique:customers'],
             'nick' => ['nullable', 'string', 'max:15'],
-            'secret' => ['required', 'string', 'min:6', 'confirmed'],
+            'secret' => ['required', 'string', 'min:6'],
         ]);
     }
 
@@ -95,7 +95,7 @@ class RegisterController extends Controller
     protected function createCustomer(array $data)
     {
         return Customer::query()->create([
-            'email' => $data['email'],
+            'email' => $data['email'] ?? '',
             'mobile' => $data['mobile'] ?? '',
             'nick' => $data['nick'] ?? '',
             'secret' => Hash::make($data['secret'])
@@ -108,10 +108,11 @@ class RegisterController extends Controller
      */
     public function registerCustomer(Request $request)
     {
+
         $validate = $this->validatorCustomer($request->all());
 
-        if ($validate->messages()->first()) {
-            return UtilsFacade::render(null, 1, $validate->messages()->first());
+        if ($validate->errors()->first()) {
+            return UtilsFacade::render(null, 1, $validate->errors()->first());
         }
 
         $customer = $this->createCustomer($request->all());
@@ -124,6 +125,4 @@ class RegisterController extends Controller
 
        return UtilsFacade::render($customer, 0, __('customize.notice.register.success'));
     }
-
-
 }

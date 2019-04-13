@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Cart;
+use phpDocumentor\Reflection\Types\Array_;
 
 class CartRepository
 {
@@ -15,6 +16,17 @@ class CartRepository
     public function page(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
     {
         return $this->query($params, $sortFiled, $sortOrder)->paginate(array_get($params, 'pageSize', 10));
+    }
+
+    /**
+     * @param array $params
+     * @param string $sortFiled
+     * @param string $sortOrder
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function get(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
+    {
+        return $this->query($params, $sortFiled, $sortOrder)->get();
     }
 
     /**
@@ -35,14 +47,10 @@ class CartRepository
     public function save(array $params)
     {
         if (!(isset($params['customer_id']) && $params['customer_id'])) {
-            return ;
+            return;
         }
 
-        if (isset($params['id']) && $params['id']) {
-            $cart = Cart::query()->where('id', '=', $params['id'])->where('customer_id', '=', $params['customer_id'])->first() ?? new Cart();
-        } else {
-            $cart = new Cart();
-        }
+        $cart = Cart::query()->where('customer_id', '=', $params['customer_id'])->where('commodity_sku_id', '=', $params['commodity_sku_id'])->first() ?? new Cart();
 
         $cart->fill($params);
         $cart->save();
@@ -81,17 +89,17 @@ class CartRepository
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      * @throws \Exception
      */
-    public function destroy($id, $customer_id)
+    public function destroy($ids, $customer_id)
     {
-        $cart = Cart::query()->where('id', '=', $id)
-            ->where('customer_id', '=', $customer_id)
-            ->first();
-
-        if ($cart) {
-            $cart->delete();
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
         }
 
-        return $cart;
+        $carts = Cart::query()->whereIn('id', $ids)
+            ->where('customer_id', '=', $customer_id)
+            ->delete();
+
+        return $carts;
     }
 
     /**
@@ -122,6 +130,7 @@ class CartRepository
             }])
             ->orderBy($sortFiled, $sortOrder)
             ->addSelect([
+                'id',
                 'customer_id',
                 'commodity_sku_id',
                 'number'
@@ -137,7 +146,6 @@ class CartRepository
 
         return $query;
     }
-
 
 
 }

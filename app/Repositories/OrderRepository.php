@@ -74,7 +74,7 @@ class OrderRepository
                 'sku_image',
                 'commodity_id'
             ]);
-        }, 'items.commositySku.commosity' => function ($query) {
+        }, 'items.commosity' => function ($query) {
             $query->select([
                 'id',
                 'name'
@@ -107,7 +107,19 @@ class OrderRepository
                     $saveOrderData['payment_no'] = '';
                 } else if ($params['status'] === Order::REFUND_STATUS_APPLIED) { //申请退款，必须为未发货状态
                     $saveOrderData['refund_status'] = Order::REFUND_STATUS_APPLIED;
+                } else if ($params['status'] === 'closed') {    //取消订单
+                    $saveOrderData['closed'] = true;
+                } else if ($params['status'] === Order::SHIP_STATUS_RECEIVED) { //收货
+                    $saveOrderData['ship_status'] = Order::SHIP_STATUS_RECEIVED;
                 }
+            }
+
+            if (isset($params['items'])) {
+                foreach ($params['items'] as $item) {
+                    $item['reviewed_at'] = time();
+                    $saveOrderData['items'][] = $item;
+                }
+                $saveOrderData['reviewed'] = true;
             }
         } else {
             $address = CustommerAddress::query()->where('customer_id', '=', $params['customer_id'])->find($params['address_id']);
@@ -159,24 +171,32 @@ class OrderRepository
             if (isset($saveOrderData)) {
 
                 if (isset($address)) {
-                    $address->update(['last_used' => Carbon::now()]);
+                    $address->update(['last_used' => time()]);
                 }
 
                 $order->fill($saveOrderData);
                 $order->save();
 
                 if (isset($saveOrderData['items'])) {
-                    foreach ($saveOrderData['items'] as &$item) {
-                        $item['order_id'] = $order->id;
+                    if (isset($skuIds)) {
+                        foreach ($saveOrderData['items'] as &$item) {
+                            $item['order_id'] = $order->id;
 
-                        if ($skusArr[$item['commodity_sku_id']]['model']->decreaseStock($item['number']) <= 0) {
-                            throw new \Exception('【' . $skusArr[$item['commodity_sku_id']]['model']->sku_name . '】商品库存不足');
+                            if ($skusArr[$item['commodity_sku_id']]['model']->decreaseStock($item['number']) <= 0) {
+                                throw new \Exception('【' . $skusArr[$item['commodity_sku_id']]['model']->sku_name . '】商品库存不足');
+                            }
                         }
-                    }
-                    Cart::query()->whereIn('commodity_sku_id', $skuIds)->where('customer_id', '=', $params['customer_id'])->delete();
 
-                    OrderItem::query()->insert($saveOrderData['items']);
+                        Cart::query()->whereIn('commodity_sku_id', $skuIds)->where('customer_id', '=', $params['customer_id'])->delete();
+                    }
+
+                    foreach ($saveOrderData['items'] as $item) {
+                        $orderItem = OrderItem::query()->find(array_get($item, 'id', '')) ?? new OrderItem();
+                        $orderItem->fill($item);
+                        $orderItem->save();
+                    }
                 }
+
             }
             DB::commit();
         } catch (\Exception $exception) {
@@ -198,10 +218,10 @@ class OrderRepository
 
         if ($order) {
             $order->delete();
+            $order->items()->delete();
         }
 
         return $order;
-
     }
 
     /**
@@ -213,12 +233,38 @@ class OrderRepository
     protected function query(array $params, $sortFiled = 'created_at', $sortOrder = 'asc')
     {
         $query = Order::query()
+            ->with(['items' => function ($query) {
+                $query->select([
+                    'id',
+                    'order_id',
+                    'commodity_id',
+                    'commodity_sku_id',
+                    'number',
+                    'price'
+                ]);
+            }, 'items.commositySku' => function ($query) {
+                $query->select([
+                    'id',
+                    'sku_image',
+                    'sku_name'
+                ]);
+            }, 'items.commosity' => function ($query) {
+                $query->select([
+                    'id',
+                    'name',
+                ]);
+            }])
             ->orderBy($sortFiled, $sortOrder)
             ->addSelect([
                 'id',
                 'order_no',
                 'total_amount',
-                'status'
+                'paid_at',
+                'ship_status',
+                'closed',
+                'created_at',
+                'refund_status',
+                'reviewed'
             ]);
 
         if (isset($params['id'])) {
@@ -248,13 +294,16 @@ class OrderRepository
      */
     protected function searchStatus($query, $status)
     {
-        if ($status === Order::PAY_STATUS_UN) {
+        if ($status === Order::PAY_STATUS_UN) { //代付款
             $query->whereNull('paid_at');
-        } else if (array_key_exists($status, Order::$shipStatusMap)) {
+        } else if (array_key_exists($status, Order::$shipStatusMap)) {      // '未发货' '已发货' '已收货'
             $query->where('ship_status', '=', $status);
         } else if (array_key_exists($status, Order::$refundStatusMap)) {  //退货列表 只显示未发货的
-            $query->where('refund_status', '=', $status)
+            $query->whereIn('refund_status', array_keys(Order::$refundStatusMap))
                 ->where('ship_status', '=', Order::SHIP_STATUS_PENDING);
+        } else if ($status === "need_review") { //待评价
+            $query->where('ship_status', '=', Order::SHIP_STATUS_RECEIVED)
+               ->where('reviewed', '=', false);
         }
 
         return $query;

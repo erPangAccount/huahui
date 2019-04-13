@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Validator;
 
 class CommoditySku extends Model
 {
@@ -68,5 +68,21 @@ class CommoditySku extends Model
     public function skuAttributes()
     {
         return $this->hasMany(CommoditySkuAttribue::class, 'sku_id');
+    }
+
+
+    public function getSkuImageAttribute($value)
+    {
+        if ($value) {
+            $validate = Validator::make(compact('value'), [
+                'value' => 'url'
+            ]);
+
+            if ($validate->errors()->first()) {
+                $value = env('APP_URL') . '/app/public/admin/' . $value;
+            }
+
+            return $value;
+        }
     }
 }

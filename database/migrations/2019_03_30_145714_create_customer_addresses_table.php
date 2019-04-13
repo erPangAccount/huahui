@@ -22,7 +22,7 @@ class CreateCustomerAddressesTable extends Migration
             $table->unsignedInteger('city_code')->default(0)->comment('城市code');
             $table->unsignedInteger('county_code')->default(0)->comment('区县code');
             $table->text('detailed')->nullable()->comment('详细地址');
-            $table->dateTime('last_used')->nullable()->comment('最后使用时间');
+            $table->integer('last_used')->default(0)->comment('最后使用时间');
             $table->boolean('is_default')->default(false)->comment('默认地址');
             $table->timestamps();
         });

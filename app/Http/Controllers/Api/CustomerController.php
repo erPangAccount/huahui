@@ -34,6 +34,9 @@ class CustomerController extends Controller
         $un_received = $this->orderService->count(['status' => Order::SHIP_STATUS_DELIVERED]);
         $extra = compact('un_pay', 'un_ship', 'un_received');
 
-        return UtilsFacade::render(array_merge($request->user(), $extra));
+        return UtilsFacade::render([
+            'user' => $request->user(),
+            'extra' => $extra
+        ]);
     }
 }

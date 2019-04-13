@@ -15,7 +15,6 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         $requestUrlPrefix = explode('/', trim($request->getPathInfo(), '/ '))[0] ?? '';
-
         if ($requestUrlPrefix == 'api') {
             return route('apiReturn', [
                 'data' => '',

@@ -19,7 +19,7 @@ class CartService
     /**
      * @param $params
      * @param int $customer_id
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     public function page($params, $customer_id = 0)
     {
@@ -30,7 +30,7 @@ class CartService
         }
 
 
-        return $this->cartRepository->page($params, $sortFiled, $sortOrder);
+        return $this->cartRepository->get($params, $sortFiled, $sortOrder);
     }
 
     /**
@@ -71,9 +71,9 @@ class CartService
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      * @throws \Exception
      */
-    public function destroy($id, $customer_id = 0)
+    public function destroy($ids, $customer_id = 0)
     {
-        return $this->cartRepository->destroy($id, $customer_id);
+        return $this->cartRepository->destroy($ids, $customer_id);
     }
 
     /**

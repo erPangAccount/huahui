@@ -81,7 +81,7 @@ class CommodityController extends Controller
                 $validate = Validator::make(compact('url'), [
                     'url' => 'url'
                 ]);
-                if ($validate->messages()->first()) {
+                if ($validate->errors()->first()) {
                     $url = env('APP_URL') . '/app/public/admin/' . $url;
                 }
 
@@ -188,7 +188,7 @@ SCRIPT
             'max:120'
         ]);
         $form->editor('description', '商品详情');
-        $form->image('image', '商品首图')->removable();
+        $form->image('image', '商品首图')->removable()->uniqueName();
         // 图册
 //        $form->multipleImage('images', '商品图册')->removable()->rules([
 //            'max:9'

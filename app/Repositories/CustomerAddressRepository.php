@@ -40,6 +40,18 @@ class CustomerAddressRepository
 
     /**
      * @param array $params
+     * @param string $sortField
+     * @param string $sortOrder
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function get(array $params, $sortField = 'created_at', $sortOrder = 'asc')
+    {
+        return $this->query($params, $sortField, $sortOrder)->get();
+    }
+
+
+    /**
+     * @param array $params
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|object|null
      */
     public function detail(array $params)
@@ -53,6 +65,10 @@ class CustomerAddressRepository
      */
     public function save(array $params)
     {
+        if (isset($params['is_default']) && $params['is_default']) {
+            CustommerAddress::query()->where('customer_id', '=', $params['customer_id'])->update(['is_default' => (int) false]);
+        }
+
         if (isset($params['id']) && $params['id']) {
             $address = $this->query($params)->first();
             if (!$address) {
@@ -62,12 +78,9 @@ class CustomerAddressRepository
             $address = new CustommerAddress();
         }
 
-        if (isset($params['is_default']) && $params['is_default']) {
-            CustommerAddress::query()->where('customer_id', '=', $params['customer_id'])->update(['is_default' => (int) false]);
-        }
-
         $address->fill($params);
         $address->save();
+
         return $address;
     }
 

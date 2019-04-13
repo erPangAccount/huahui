@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
+use phpDocumentor\Reflection\Types\Self_;
 
 class Order extends Model
 {
@@ -102,10 +103,26 @@ class Order extends Model
      */
     public function getStatusAttribute()
     {
-        if (is_null($this->paid_at)) {
+
+        if ($this->closed) {
+            return [
+                'key' => 'closed',
+                'value' => '已关闭'
+            ];
+        } else if (!$this->reviewed && $this->ship_status === self::SHIP_STATUS_RECEIVED) {
+            return [
+                'key' => "need_review",
+                'value' => '待评价'
+            ];
+        } else if (is_null($this->paid_at)) {
             return [
                 'key' => self::PAY_STATUS_UN,
                 'value' => '未支付'
+            ];
+        }else if($this->refund_status != self::REFUND_STATUS_PENDING) {
+            return [
+                'key' => $this->refund_status,
+                'value' => self::$refundStatusMap[$this->refund_status]
             ];
         } else {
             return [

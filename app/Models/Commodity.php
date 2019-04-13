@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Validator;
 
 class Commodity extends Model
 {
@@ -76,5 +78,20 @@ class Commodity extends Model
     public function reviews()
     {
         return $this->hasMany(OrderItem::class, 'commodity_id')->whereNotNull('reviewed_at');
+    }
+
+    public function getImageAttribute($value)
+    {
+        if ($value) {
+            $validate = Validator::make(compact('value'), [
+                'value' => 'url'
+            ]);
+
+            if ($validate->errors()->first()) {
+                $value = env('APP_URL') . '/app/public/admin/' . $value;
+            }
+
+            return $value;
+        }
     }
 }

@@ -25,7 +25,7 @@ class CustomerAddressService
     /**
      * @param array $params
      * @param int $customer_id
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     public function page(array $params, $customer_id = 0)
     {
@@ -35,7 +35,7 @@ class CustomerAddressService
             $params['customer_id'] = $customer_id;
         }
 
-        return $this->customerAddressRepository->page($params, $sortField, $sortOrder);
+        return $this->customerAddressRepository->get($params, $sortField, $sortOrder);
     }
 
     /**
@@ -128,6 +128,16 @@ class CustomerAddressService
                 'boolean'
             ]
         ];
+
+        if (isset($params['province_code'])) {
+            $params['province_code'] = str_pad($params['province_code'], 6, 0, STR_PAD_RIGHT);
+        }
+        if (isset($params['city_code'])) {
+            $params['city_code'] = str_pad($params['city_code'], 6, 0, STR_PAD_RIGHT);
+        }
+        if (isset($params['county_code'])) {
+            $params['county_code'] = str_pad($params['county_code'], 6, 0, STR_PAD_RIGHT);
+        }
 
         $validate = Validator::make($params, $rules);
         if ($validate->errors()->first()) {

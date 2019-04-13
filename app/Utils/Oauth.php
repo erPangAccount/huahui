@@ -20,7 +20,7 @@ class Oauth
                     'grant_type' => 'password',
                     'client_id' => env('OAUTH_PASSWORD_CLIENT_ID', ''),
                     'client_secret' => env('OAUTH_PASSWORD_CLIENT_SECRET', ''),
-                    'username' => $request->get('username', 'forget'),
+                    'username' => $request->get('mobile', 'forget'),
                     'password' => $request->get('secret', 'forget'),
                     'scope' => '',
                 ],

@@ -45,9 +45,12 @@ class OrderService
         if ($customer_id) {
             $params['customer_id'] = $customer_id;
         }
-        $params['closed'] = (int)false;
 
-        return $this->orderRepository->page($params, $sortFiled, $sortOrder);
+        $result = $this->orderRepository->page($params, $sortFiled, $sortOrder);
+        foreach ($result as $item) {
+            $item->append('status');
+        }
+        return $result;
     }
 
     /**
@@ -59,8 +62,7 @@ class OrderService
     {
         $params = [
             'id' => $id,
-            'customer_id' => $customer_id,
-            'closed' => (int)false
+            'customer_id' => $customer_id
         ];
 
         return $this->orderRepository->detail($params);

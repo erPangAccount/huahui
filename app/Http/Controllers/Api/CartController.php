@@ -61,9 +61,9 @@ class CartController extends Controller
      * @return mixed
      * @throws \Exception
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $ids)
     {
-        return UtilsFacade::render($this->cartService->destroy($id, $request->user()->id));
+        return UtilsFacade::render($this->cartService->destroy($ids, $request->user()->id));
     }
 
 }

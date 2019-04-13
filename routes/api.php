@@ -32,6 +32,11 @@ Route::middleware(['client', 'cors'])->group(function () {
         //商品列表
         Route::get('/commodities', 'CommodityController@index')->name('commodities.index');
         Route::get('/commodities/{id}', 'CommodityController@show')->name('commodities.show');
+        //单品详情
+        Route::get('/commodities_sku/{ids}', 'CommoditySkuController@show')->name('commodities_sku.show');
+
+        //分类列表
+        Route::get('/commodities_category', 'CommodityCategoryController@index')->name('commodities_category.index');
     });
 
     Route::post('getPasswordToken', function (Request $request) {    //获取用户密码登录的token
@@ -47,16 +52,15 @@ Route::middleware(['client', 'cors'])->group(function () {
 });
 
 Route::middleware(['auth:api', 'cors'])->group(function () {
-    //用户信息
-    Route::get('/customer', 'CustomerController@show')->name('customer.show');
-
 
     Route::group(['namespace' => 'Api'], function () {
+        //用户信息
+        Route::get('/customer', 'CustomerController@show')->name('customer.show');
         //购物车
         Route::get('/cart', 'CartController@index')->name('cart.index');
         Route::post('/cart', 'CartController@store')->name('cart.store');
         Route::match(['put', 'patch'], '/cart/{id}', 'CartController@update')->name('cart.update');
-        Route::delete('/cart/{id}', 'CartController@destroy')->name('cart.destroy');
+        Route::delete('/cart/{ids}', 'CartController@destroy')->name('cart.destroy');
 
         //地址
         Route::get('/address', 'CustomerAddressController@index')->name('address.index');

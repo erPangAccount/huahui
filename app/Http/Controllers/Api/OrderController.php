@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
  *
  * @apiUse Page
  * @apiUse Sort
- * @apiParam    {String="unpay", "pending", "delivered", "received"}    status    订单状态 unpay(未支付), pending(未发货), delivered(已发货), received(已收货),
+ * @apiParam    {String="unpay", "pending", "delivered", "received"}    status    订单状态 unpay(代付款), delivered(待收货), need_review(待评价), unapplied(退款),
  *
  * @apiSuccess        {Number}    status    状态码
  * @apiSuccess        {String}    message    状态提示
@@ -59,7 +59,7 @@ use Illuminate\Http\Request;
  * @apiName orders.update
  * @apiGroup orders
  *
- * @apiParam    {String="paid", "applied"}    status    订单状态 paid(支付订单), applied(申请退款)
+ * @apiParam    {String="paid", "applied"}    status    订单状态 paid(支付订单), applied(申请退款), closed(取消订单), received(收货)
  *
  * @apiSuccess        {Number}    status    状态码
  * @apiSuccess        {String}    message    状态提示

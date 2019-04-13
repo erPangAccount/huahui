@@ -42,8 +42,20 @@ class CommodityRepository
             ]);
         }, 'reviews.commositySku' => function ($query) {
             $query->select([
+                'id',
                 'sku_name',
                 'sku_image'
+            ]);
+        }, 'reviews.order' => function ($query) {
+            $query->select([
+                'id',
+                'customer_id'
+            ]);
+        }, 'reviews.order.customer' => function ($query) {
+            $query->select([
+                'id',
+                'nick',
+                'mobile'
             ]);
         }])->findOrFail($id);
     }
@@ -74,6 +86,10 @@ class CommodityRepository
 
         if (isset($params['keyWords'])) {
             $query = $this->searchKeyWords($query, $params['keyWords']);
+        }
+
+        if (isset($params['category_id'])) {
+            $query->where('category_id', '=', $params['category_id']);
         }
 
         if (isset($params['name'])) {
