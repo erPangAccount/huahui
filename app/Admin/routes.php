@@ -31,6 +31,9 @@ Route::group([
     $router->match(['put', 'patch'], 'commodity_category/{id}', 'CommodityCategoryController@update');
     $router->post('commodity_category', 'CommodityCategoryController@store');
     $router->delete('commodity_category/{id}', 'CommodityCategoryController@destroy');
+    //订单管理
+    $router->get('orders', 'OrderController@index');
+    $router->get('orders/{id}', 'OrderController@show');
 
     //api
     $router->group([
@@ -41,4 +44,13 @@ Route::group([
         $router->get('/commodity_category', 'CommodityCategoryController@index');
     });
 
+});
+
+Route::group([
+    'prefix' => 'admin/api',
+    'namespace' => config('admin.route.namespace') . '\Api',
+    'middleware' => 'api'
+], function () {
+    //商品类别api
+    Route::match(['put', 'patch'], 'orders/{id}', 'OrderController@update');
 });
