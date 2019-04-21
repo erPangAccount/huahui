@@ -14,7 +14,7 @@ class CreateCommoditySkuAttributeTable extends Migration
     public function up()
     {
         Schema::create('commodity_sku_attribute', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->integerIncrements('id');
             $table->unsignedInteger('sku_id')->comment('商品skuId');
             $table->json('attribute_info')->nullable()->comment('商品sku属性信息');
             $table->timestamps();

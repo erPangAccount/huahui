@@ -14,7 +14,7 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->integerIncrements('id');
             $table->string('order_no', '26')->default('')->comment('订单编号');
             $table->unsignedInteger('customer_id')->default(0)->comment('下单人id');
             $table->json('address')->nullable()->comment('收货地址');
@@ -27,7 +27,7 @@ class CreateOrdersTable extends Migration
             $table->string('refund_no')->default('')->comment('退款单号');
             $table->boolean('closed')->default(false)->comment('关闭否');
             $table->boolean('reviewed')->default(false)->comment('评价否');
-            $table->string('ship_status', 10)->default(\App\Models\Order::SHIP_STATUS_PENDING)->comment('物流状态');
+            $table->string('ship_status', 20)->default(\App\Models\Order::SHIP_STATUS_PENDING)->comment('物流状态');
             $table->json('ship_data')->nullable()->comment('物流信息');
             $table->json('extra')->nullable()->comment('额外数据');
             $table->timestamps();

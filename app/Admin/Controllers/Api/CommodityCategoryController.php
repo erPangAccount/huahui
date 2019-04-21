@@ -11,7 +11,7 @@ class CommodityCategoryController extends Controller
     {
         $query = CommodityCategory::query()->selectRaw("id, name as text");
         if ($request->get('filterCategory', '')) {
-            $query->where('parent', '=', 0);
+            $query->where('parent_id', '=', 0);
         } else if ($request->get('filterCommodity', '')) {
             $query->where('level', '=', 3);
         } else {

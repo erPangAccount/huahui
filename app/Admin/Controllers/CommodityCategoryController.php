@@ -171,8 +171,8 @@ SCRIPT
             // 去掉`继续编辑`checkbox
             $footer->disableEditingCheck();
 
-            // 去掉`继续创建`checkbox
-            $footer->disableCreatingCheck();
+//            // 去掉`继续创建`checkbox
+//            $footer->disableCreatingCheck();
         });
 
         $form->saving(function (Form $form) {

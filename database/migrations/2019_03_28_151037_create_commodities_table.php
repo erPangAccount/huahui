@@ -14,7 +14,7 @@ class CreateCommoditiesTable extends Migration
     public function up()
     {
         Schema::create('commodities', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->integerIncrements('id');
             $table->unsignedInteger('category_id')->default(0)->comment('商品类别Id');
             $table->string('name', 120)->default('')->comment('商品名称');
             $table->text('description')->nullable()->comment('商品详情');

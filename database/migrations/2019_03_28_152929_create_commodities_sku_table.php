@@ -14,7 +14,7 @@ class CreateCommoditiesSkuTable extends Migration
     public function up()
     {
         Schema::create('commodities_sku', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->integerIncrements('id');
             $table->string('sku_name', 120)->default('')->comment('商品sku名称');
             $table->string('sku_description', 200)->default('')->comment('商品sku简介');
             $table->decimal('sku_price', 12, 2)->default(0)->comment('商品sku价格');

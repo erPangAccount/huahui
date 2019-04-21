@@ -14,7 +14,7 @@ class CreateCommodityAttributesTable extends Migration
     public function up()
     {
         Schema::create('commodity_attributes', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->integerIncrements('id');
             $table->string('attribute_name', 30)->comment('商品属性名称');
             $table->string('icon')->default('')->comment('商品属性图标');
             $table->timestamps();

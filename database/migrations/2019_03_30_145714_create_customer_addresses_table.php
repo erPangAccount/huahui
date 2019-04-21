@@ -14,7 +14,7 @@ class CreateCustomerAddressesTable extends Migration
     public function up()
     {
         Schema::create('customer_addresses', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->integerIncrements('id');
             $table->unsignedInteger('customer_id')->default(0)->comment('用户id');
             $table->string('recipient_name', 20)->default('')->comment('收件人姓名');
             $table->string('recipient_phone', 12)->default('')->comment('收件人手机号码');
